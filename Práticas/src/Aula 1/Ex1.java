@@ -8,18 +8,21 @@ public class Ex1 {
         
         if(!scanner.hasNext()){
             System.err.println("Primeiro número inválido!");
+            scanner.close();
             return;
         }
         double num1 = scanner.nextDouble();
 
         if(!scanner.hasNext()){
             System.err.println("Operador ausente!");
+            scanner.close();
             return;
         }
         String operador = scanner.next();
 
         if(!scanner.hasNextDouble()){
             System.err.println("Segundo número inválido!");
+            scanner.close();
             return;
         }
         double num2 = scanner.nextDouble();
@@ -47,5 +50,6 @@ public class Ex1 {
                 System.err.println("Erro: Operador inválido.");
         }
         System.out.println("Resultado: "+ resultado);
+        scanner.close();
     }
 }
