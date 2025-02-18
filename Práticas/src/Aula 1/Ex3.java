@@ -8,6 +8,7 @@ public class Ex3 {
         Stack<Double> stack = new Stack<>();
         if(!sc.hasNextDouble()){
             System.err.println("Operando em falta!");
+            sc.close();
             return;
         }
         while(sc.hasNext()){
@@ -27,6 +28,7 @@ public class Ex3 {
                 }
             }
         }
+        sc.close();
         System.out.println("Stack: " + stack);
     }
 

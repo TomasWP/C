@@ -1,118 +1,81 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Ex2 {
-
     public static void main(String[] args) {
-
-        // Cria um mapa para armazenar variáveis e seus valores
-        Map<String, Double> variaveis = new HashMap<>();
-
         Scanner scanner = new Scanner(System.in);
+        Map<String, Double> variables = new HashMap<>();
 
-        while (true) {
-            System.out.println("Digite uma operação ou 'exit' para encerrar:");
-            String input = scanner.nextLine().trim();
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            String[] tokens;
 
-            if (input.equalsIgnoreCase("exit")) {
-                break;
+            
+            if (line.isEmpty()) continue;
+            
+            if (line.contains(" ")){
+                tokens = line.split(" ");
+            } else {
+                // Se for apenas um número ou variável, não divide mais
+                tokens = new String[] {line};
             }
 
-            // Remove todos os espaços em branco antes de tentar processar
-            input = input.replaceAll("\\s+", "");
-
-            // Verifica se a entrada é uma atribuição de valor a uma variável (exemplo: n = 10)
-            if (input.contains("=")) {
-                // Divide a linha de entrada na variável e valor
-                String[] partes = input.split("=");
-                if (partes.length == 2) {
-                    String variavel = partes[0].trim();
-                    String valor = partes[1].trim();
-
-                    try {
-                        double valorNumerico = Double.parseDouble(valor);
-                        variaveis.put(variavel, valorNumerico);  // Armazena a variável e seu valor
-                        System.out.println("Variável " + variavel + " atribuída com sucesso!");
-                    } catch (NumberFormatException e) {
-                        System.err.println("Erro: Valor inválido para a variável.");
-                    }
-                } else {
-                    System.err.println("Erro: Formato de atribuição inválido.");
+            if (tokens.length >= 3 && tokens[1].equals("=")) {
+                // Atribuição de variável (ex: n = 10)
+                try {
+                    double value = evaluateExpression(Arrays.copyOfRange(tokens, 2, tokens.length), variables);
+                    variables.put(tokens[0], value);
+                } catch (NumberFormatException e) {
+                    System.err.println("Erro: Valor inválido para variável.");
                 }
             } else {
-                // Se a entrada não for uma atribuição, é uma operação matemática
-                String[] tokens = input.split("(?=[-+*/])|(?<=[-+*/])");
-
-                if (tokens.length == 3) {
-                    try {
-                        // Tenta obter os valores das variáveis, se existirem
-                        double num1 = 0;
-                        // Verifica se o primeiro token é uma variável ou número
-                        try {
-                            num1 = Double.parseDouble(tokens[0]);
-                        } catch (NumberFormatException e) {
-                            // Se não for um número, tenta buscar no mapa
-                            if (variaveis.containsKey(tokens[0])) {
-                                num1 = variaveis.get(tokens[0]);
-                            } else {
-                                System.err.println("Erro: A variável '" + tokens[0] + "' não foi definida.");
-                                continue;
-                            }
-                        }
-
-                        String operador = tokens[1];
-
-                        double num2 = 0;
-                        // Verifica se o segundo token é uma variável ou número
-                        try {
-                            num2 = Double.parseDouble(tokens[2]);
-                        } catch (NumberFormatException e) {
-                            // Se não for um número, tenta buscar no mapa
-                            if (variaveis.containsKey(tokens[2])) {
-                                num2 = variaveis.get(tokens[2]);
-                            } else {
-                                System.err.println("Erro: A variável '" + tokens[2] + "' não foi definida.");
-                                continue;
-                            }
-                        }
-
-                        double resultado = 0;
-
-                        // Realiza a operação
-                        switch (operador) {
-                            case "+":
-                                resultado = num1 + num2;
-                                break;
-                            case "-":
-                                resultado = num1 - num2;
-                                break;
-                            case "*":
-                                resultado = num1 * num2;
-                                break;
-                            case "/":
-                                if (num2 == 0) {
-                                    System.err.println("Erro: Denominador inválido.");
-                                    continue;
-                                } else {
-                                    resultado = num1 / num2;
-                                }
-                                break;
-                            default:
-                                System.err.println("Erro: Operador inválido.");
-                                continue;
-                        }
-
-                        System.out.println("Resultado: " + resultado);
-                    } catch (Exception e) {
-                        System.err.println("Erro: Entrada inválida.");
-                    }
-                } else {
-                    System.err.println("Erro: Formato de operação inválido.");
+                // Expressão matemática
+                try {
+                    double resultado = evaluateExpression(tokens, variables);
+                    System.out.println("Resultado: " + resultado);
+                } catch (NumberFormatException e) {
+                    System.err.println("Erro: Operação inválida.");
                 }
             }
         }
-
         scanner.close();
+    }
+
+    private static double evaluateExpression(String[] tokens, Map<String, Double> variables) throws NumberFormatException {
+        double result = parseOperand(tokens[0], variables);
+        for (int i = 1; i < tokens.length; i += 2) {
+            if (i + 1 >= tokens.length) {
+                System.err.println("Erro: Expressão inválida.");
+                return Double.NaN;
+            }
+            String operador = tokens[i];
+            double num = parseOperand(tokens[i + 1], variables);
+            result = calcular(result, num, operador);
+        }
+        return result;
+    }
+
+    private static double parseOperand(String token, Map<String, Double> variables) throws NumberFormatException {
+        if (variables.containsKey(token)) {
+            return variables.get(token);
+        } else {
+            return Double.parseDouble(token);
+        }
+    }
+
+    private static double calcular(double num1, double num2, String operador) {
+        switch (operador) {
+            case "+": return num1 + num2;
+            case "-": return num1 - num2;
+            case "*": return num1 * num2;
+            case "/": 
+                if (num2 == 0) {
+                    System.err.println("Erro: Divisão por zero.");
+                    return Double.NaN;
+                }
+                return num1 / num2;
+            default:
+                System.err.println("Erro: Operador inválido.");
+                return Double.NaN;
+        }
     }
 }
