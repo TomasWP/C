@@ -1,0 +1,3 @@
+antlr4-visitor -f Hello Execute String		// -f caso ficheiro ja exista
+antlr4-main -v Execute -f					
+antlr4-build
