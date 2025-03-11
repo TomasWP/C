@@ -1,3 +1,8 @@
 antlr4-visitor -f Hello Execute String		// -f caso ficheiro ja exista
-antlr4-main -v Execute -f					
+antlr4-main -v Execute -f	
+
 antlr4-build
+echo "" | antlr4-test -gui  ou  cat p1.txt | antlr4-test -gui
+echo "" | antlr4-run        ou  cat p1.txt | antlr4-run
+
+java -ea HelloMain
