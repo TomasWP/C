@@ -13,7 +13,7 @@ public class Execute extends SuffixCalculatorBaseVisitor<Double> {
    }
 
    @Override public Double visitExprNumber(SuffixCalculatorParser.ExprNumberContext ctx) {
-      return Double.parseDoule(ctx.Integer().getText());
+      return Double.valueOf(ctx.Number().getText());
    }
 
    @Override public Double visitExprSuffix(SuffixCalculatorParser.ExprSuffixContext ctx) {
@@ -25,16 +25,12 @@ public class Execute extends SuffixCalculatorBaseVisitor<Double> {
       switch(op){
          case "+":
             return  left+right;
-            break;
          case "-":
             return  left-right;
-            break;
          case "*":
             return left*right;
-            break;
          case "/":
             return  left/right;
-            break;
          default:
             throw new IllegalArgumentException("Operador desconhecido: "+op);
       } 

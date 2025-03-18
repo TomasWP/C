@@ -1,7 +1,10 @@
 {
-    "java.project.sourcePaths": ["src"],
+    "java.project.sourcePaths": [
+        "src"
+    ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "src/antlr4-install/antlr-runtime-4.13.2.jar",
+        "/home/tomas/C/Práticas/src/antlr4-install/antlr-4.13.2-complete.jar"
     ]
 }
